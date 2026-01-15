@@ -25,7 +25,7 @@ export class Ball {
     }
 
     update(){
-        this.mouvement.y += 0
+        this.mouvement.y += 0.07
         this.position = vectAdd(this.position, this.mouvement)
     }
 
