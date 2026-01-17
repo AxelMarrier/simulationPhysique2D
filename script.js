@@ -12,6 +12,8 @@ const objects = []
 
 let simu_debut = false
 
+var output;
+
 document.addEventListener("DOMContentLoaded", function(){
     canvas.bgChange(200, 200, 200);
 
@@ -20,34 +22,59 @@ document.addEventListener("DOMContentLoaded", function(){
     let wall2 = new Wall(width, height, width, 0,);
     let ceiling = new Wall(0, 0, width, 0);
 
-    
-    for (let index = 1; index < 20; index++) {
-        let ball = new Ball(width/20 * index, height/5, (Math.random() * 2 -1)*3, (Math.random() * 2 -1)*3, 10);
-        let ball2 = new Ball(width/20 * index, height/5 * 2, (Math.random() * 2 -1)*3, (Math.random() * 2 -1)*3, 11);
-        let ball3 = new Ball(width/20 * index, height/5 * 3, (Math.random() * 2 -1)*3, (Math.random() * 2 -1)*3, 12);
-        let ball4 = new Ball(width/20 * index, height/5 * 4, (Math.random() * 2 -1)*3, (Math.random() * 2 -1)*3, 13);
-        balls.push(ball)
-        balls.push(ball2)
-        balls.push(ball3)
-        balls.push(ball4)
-    }
-
     walls.push(floor, wall1, wall2, ceiling);
-    objects.push(...walls, ...balls);
 
-    objects.forEach(object => { //dessine les objets
-        object.draw(canvas);
+    walls.forEach(wall => { //dessine les objets
+        wall.draw(canvas);
     });
 
     SetupControlUI();
 })
 
 function SetupControlUI(){
-    console.log("Début du setup de l'UI pour le controle de la simulation")
     let btnStart = document.createElement("button")
     document.querySelector("body").appendChild(btnStart)
     btnStart.innerText = "Démarrer la simulation"
     btnStart.addEventListener("click", debutSimulation)
+
+    console.log("Btn nb balls")
+    let btnNb = document.createElement("input")
+    btnNb.type = "range"
+    btnNb.id = "btnNb"
+    btnNb.min = 0
+    btnNb.value = 0
+    btnNb.step = 1 
+    btnNb.max = 1000
+    document.querySelector("body").appendChild(btnNb)
+
+    let outputNb = document.createElement("output")
+    outputNb.value = "0"   
+    document.querySelector("body").appendChild(outputNb)
+    btnNb.addEventListener("input", () => {
+        outputNb.value = btnNb.value;
+    });
+}
+
+function init(){
+    
+
+    output = document.querySelector("output")
+    if(output != null){
+        output = Number(output.value) + 1   
+        console.log(output)
+    }
+    
+    for (let index = 1; index < output; index++) {
+        let ball = new Ball(width/output * index, height/5, (Math.random() * 2 -1)*3, (Math.random() * 2 -1)*3, 10);
+        balls.push(ball)
+    }
+
+   
+    objects.push(...walls, ...balls);
+
+    objects.forEach(object => { //dessine les objets
+        object.draw(canvas);
+    });
 }
 
 function update(){
@@ -80,6 +107,8 @@ function update(){
 function debutSimulation(){
     if(simu_debut == 0){
         simu_debut = 1
+
+        init()
 
         setInterval(() => {
             update()
