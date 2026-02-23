@@ -10,34 +10,37 @@ const balls = []
 const walls = []
 const objects = []
 
+const nb_balls = 20
+
 let simu_debut = false
 
 document.addEventListener("DOMContentLoaded", function(){
     canvas.bgChange(200, 200, 200);
 
     let floor = new Wall(width, height, 0, height);
-    let wall1 = new Wall(0, 0, 0, height);
-    let wall2 = new Wall(width, height, width, 0,);
+    let wall1 = new Wall(0, height, 0, 0);
+    let wall2 = new Wall(width, 0, width, height);
     let ceiling = new Wall(0, 0, width, 0);
 
-    
-    for (let index = 1; index < 20; index++) {
-        let ball = new Ball(width/20 * index, height/5, (Math.random() * 2 -1)*3, (Math.random() * 2 -1)*3, 10);
-        let ball2 = new Ball(width/20 * index, height/5 * 2, (Math.random() * 2 -1)*3, (Math.random() * 2 -1)*3, 11);
-        let ball3 = new Ball(width/20 * index, height/5 * 3, (Math.random() * 2 -1)*3, (Math.random() * 2 -1)*3, 12);
-        let ball4 = new Ball(width/20 * index, height/5 * 4, (Math.random() * 2 -1)*3, (Math.random() * 2 -1)*3, 13);
+    let box_1 = new Wall(400, 400, 500, 500);
+    let box_2 = new Wall(500, 500, 400, 400);
+
+
+    for (let index = 1; index < nb_balls; index++) {
+        let ball = new Ball(width/nb_balls * index, height/5, (Math.random() * 2 -1)*3, (Math.random() * 2 -1)*3, 10);
         balls.push(ball)
-        balls.push(ball2)
-        balls.push(ball3)
-        balls.push(ball4)
     }
 
-    walls.push(floor, wall1, wall2, ceiling);
+    walls.push(floor, wall1, wall2, ceiling, box_1, box_2);
     objects.push(...walls, ...balls);
 
     objects.forEach(object => { //dessine les objets
         object.draw(canvas);
     });
+
+    canvas.canvas.addEventListener("mousemove",(e)=>{
+        console.log(e);
+    })
 
     SetupControlUI();
 })
@@ -61,9 +64,9 @@ function update(){
         ball.update();
     });
 
-    // walls.forEach(wall => { //affiche la direction des murs
-    //     wall.drawNormal(canvas);
-    // });
+    walls.forEach(wall => { //affiche la direction des murs
+        wall.drawNormal(canvas);
+    });
 
     //détection collision
     balls.forEach(ball => {

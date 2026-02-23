@@ -11,7 +11,7 @@ export class Wall {
         this.directeur = vectSub(this.B, this.A)
 
         //normal normalisé
-        this.normal = new Vector(this.directeur.y, this.directeur.x).normalise();
+        this.normal = new Vector(-this.directeur.y, this.directeur.x).normalise();
     }
 
     draw(canvas){
