@@ -12,7 +12,7 @@ const objects = []
 
 const nb_balls = 20
 
-let simu_debut = false
+let editor_mode = true
 
 document.addEventListener("DOMContentLoaded", function(){
     canvas.bgChange(200, 200, 200);
@@ -39,7 +39,8 @@ document.addEventListener("DOMContentLoaded", function(){
     });
 
     canvas.canvas.addEventListener("mousemove",(e)=>{
-        console.log(e);
+        document.querySelector('#posX mark').innerHTML = e.offsetX
+        document.querySelector('#posY mark').innerHTML = e.offsetY
     })
 
     SetupControlUI();
@@ -81,8 +82,8 @@ function update(){
 }
 
 function debutSimulation(){
-    if(simu_debut == 0){
-        simu_debut = 1
+    if(editor_mode == true){
+        editor_mode = false
 
         setInterval(() => {
             update()
