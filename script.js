@@ -10,8 +10,6 @@ const balls = []
 const walls = []
 const objects = []
 
-const nb_balls = 20
-
 let editor_mode = true
 
 document.addEventListener("DOMContentLoaded", function(){
@@ -22,17 +20,9 @@ document.addEventListener("DOMContentLoaded", function(){
     let wall2 = new Wall(width, 0, width, height);
     let ceiling = new Wall(0, 0, width, 0);
 
-    let box_1 = new Wall(400, 400, 500, 500);
-    let box_2 = new Wall(500, 500, 400, 400);
-
-
-    for (let index = 1; index < nb_balls; index++) {
-        let ball = new Ball(width/nb_balls * index, height/5, (Math.random() * 2 -1)*3, (Math.random() * 2 -1)*3, 10);
-        balls.push(ball)
-    }
-
-    walls.push(floor, wall1, wall2, ceiling, box_1, box_2);
-    objects.push(...walls, ...balls);
+    walls.push(floor, wall1, wall2, ceiling);
+    
+    objects.push(...walls);
 
     objects.forEach(object => { //dessine les objets
         object.draw(canvas);
@@ -65,25 +55,36 @@ function update(){
         ball.update();
     });
 
+    /*
     walls.forEach(wall => { //affiche la direction des murs
         wall.drawNormal(canvas);
     });
+    */
 
-    //détection collision
-    balls.forEach(ball => {
-        ball.collision(objects);
-    });
-    balls.forEach(ball => {
-        ball.collision(objects);
-    });
-    balls.forEach(ball => {
-        ball.collision(objects);
-    }); 
+    //détection collision (répété 3 fois pour plus de précision)
+
+    for (let index = 0; index < 3; index++) {
+        balls.forEach(ball => {
+            ball.collision(objects);
+        });
+    }
+    
+    
+    
 }
 
 function debutSimulation(){
     if(editor_mode == true){
         editor_mode = false
+
+        let nb_balls = Number(document.querySelector('#nbBalls input').value);
+
+        for (let index = 1; index < nb_balls + 1; index++) {
+            let ball = new Ball(width/nb_balls * index, height/5, (Math.random() * 2 -1)*3, (Math.random() * 2 -1)*3, 10);
+            balls.push(ball);
+        }
+
+        objects.push(...balls);
 
         setInterval(() => {
             update()
