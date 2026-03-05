@@ -4,9 +4,14 @@ import { Ball } from "./class/Ball.js";
 const balls = []
 const walls = []
 const objects = []
+const ball_size = 10
 
 const width = 750;
 const height = 515;
+const grid = Array.from({ length: Math.ceil(width/ball_size) }, () =>
+    Array.from({ length: Math.ceil(height/ball_size) }, () => [])
+)
+
 let editor_mode = true 
 let canvas = new Canvas(width, height);
 
@@ -26,6 +31,8 @@ document.addEventListener("DOMContentLoaded", function(){
     walls.forEach(object => { //dessine les objets
         object.draw(canvas);
     });
+
+    console.log(grid)
 })
 
 function update(){
@@ -64,12 +71,29 @@ function debutSimulation(){
         let nb_balls = Number(document.querySelector('#nbBalls input').value);
 
         for (let index = 1; index < nb_balls + 1; index++) {
-            let ball = new Ball(width/nb_balls * index, height/5, (Math.random() * 2 -1)*3, (Math.random() * 2 -1)*3, 10);
+            let ball = new Ball(width/nb_balls * index, height/5, (Math.random() * 2 -1)*3, (Math.random() * 2 -1)*3, ball_size);
             balls.push(ball);
+
+            //ajout initial des balls à la grid
+            /*
+            try{
+                grid[Math.floor(ball.position.x/ball_size)-1][Math.floor(ball.position.y/ball_size)-1].push(ball);
+            } catch(e){
+                alert("crash")
+                console.log(e)
+                console.log(ball.position)
+                console.log(Math.floor(ball.position.x/ball_size), Math.floor(ball.position.y/ball_size))
+                console.log(grid[Math.floor(ball.position.x/ball_size)][Math.floor(ball.position.y/ball_size)])
+            }
+            */
+            
         }
 
         
         objects.push(...balls, ...walls);
+
+        //update gravity
+        Ball.setGravity(document.querySelector("#nbGravity input").value)
 
         setInterval(() => {
             update()
@@ -86,12 +110,20 @@ function eventHandler(){
     document.querySelector("#DebutSimu").addEventListener('click', debutSimulation);
 
     //Conteur de balles
-    document.querySelector("#nbBalls input").addEventListener('input', updateBallCounter);
+    document.querySelector("#nbBalls input").addEventListener('input', function(){
+        document.querySelector('#nbBalls label').innerHTML = this.value;
+    });
+
+    //Conteur gravité
+    document.querySelector("#nbGravity input").addEventListener('input', function(){
+        document.querySelector('#nbGravity label').innerHTML = this.value;
+        Ball.setGravity(this.value);
+    });
 
     //Détection click pour les balles
     canvas.canvas.addEventListener("click", function(e){
-        if(document.querySelector('#editorSelect').value == "ball"){
-            let ball = new Ball(e.offsetX, e.offsetY, 0, 0, 10)
+        if(document.querySelector('#editorSelect').value == "ball" && editor_mode == true){
+            let ball = new Ball(e.offsetX, e.offsetY, 0, 0, ball_size)
             balls.push(ball);
             ball.draw(canvas);
         }
@@ -102,7 +134,7 @@ function eventHandler(){
     let wallY1 = 0
     //Détection click pour les murs 1
     canvas.canvas.addEventListener("mousedown", function(e){
-        if(document.querySelector('#editorSelect').value == "wall"){
+        if(document.querySelector('#editorSelect').value == "wall" && editor_mode == true){
             if(wallStep == 0){
                 wallStep = 1
                 wallX1 = e.offsetX
@@ -120,8 +152,4 @@ function eventHandler(){
             }
         }
     })
-}
-
-function updateBallCounter(){
-    document.querySelector('#nbBalls label').innerHTML = document.querySelector("#nbBalls input").value;
 }

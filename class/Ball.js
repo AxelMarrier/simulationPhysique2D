@@ -8,8 +8,14 @@ export class Ball {
         this.mouvement = new Vector(xMov, yMov)
     }
 
+    static gravity = 0.07;
+
     static vectConstructor(position, mouvement, size){
         return new Ball(position.x, position.y,mouvement.x, mouvement.y, size)
+    }
+
+    static setGravity(newGravity){
+        Ball.gravity = 0.07 * newGravity;
     }
 
     draw(canvas, full = true){
@@ -25,7 +31,7 @@ export class Ball {
     }
 
     update(){
-        this.mouvement.y += 0.07
+        this.mouvement.y += Ball.gravity
         this.position = vectAdd(this.position, this.mouvement)
     }
 
