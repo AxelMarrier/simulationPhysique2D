@@ -8,9 +8,13 @@ const ball_size = 10
 
 const width = 750;
 const height = 515;
-const grid = Array.from({ length: Math.ceil(width/ball_size) }, () =>
-    Array.from({ length: Math.ceil(height/ball_size) }, () => [])
-)
+let grid = Array.from(
+    { length: Math.ceil(width / (ball_size*2)) },
+    () => Array.from(
+        { length: Math.ceil(height / (ball_size*2)) },
+        () => []
+    )
+);
 
 let editor_mode = true 
 let canvas = new Canvas(width, height);
@@ -31,8 +35,6 @@ document.addEventListener("DOMContentLoaded", function(){
     walls.forEach(object => { //dessine les objets
         object.draw(canvas);
     });
-
-    console.log(grid)
 })
 
 function update(){
@@ -59,11 +61,31 @@ function update(){
             ball.collision(objects);
         });
     }
+
+    //vider la grille
+    grid = Array.from(
+        { length: Math.ceil(width / (2*ball_size)) },
+        () => Array.from(
+            { length: Math.ceil(height / (ball_size*2)) },
+            () => []
+        )
+    );
+
+    //recalculer la grille
+    balls.forEach(ball => {
+        let column = Math.min(Math.max(Math.floor(ball.position.x/(ball_size*2))-1, 0), 74)
+        let row = Math.min(Math.max(Math.floor(ball.position.y/(ball_size*2))-1,0), 51)
+        
+        grid[column][row].push(ball)
+        console.log(column, row)
+        console.log(grid[column][row])
+    });
     
 }
 
 
 function debutSimulation(){
+    console.log(grid)
     if(editor_mode == true){
         console.log("Début de la simultation")
         editor_mode = false
@@ -74,19 +96,10 @@ function debutSimulation(){
             let ball = new Ball(width/nb_balls * index, height/5, (Math.random() * 2 -1)*3, (Math.random() * 2 -1)*3, ball_size);
             balls.push(ball);
 
-            //ajout initial des balls à la grid
-            /*
-            try{
-                grid[Math.floor(ball.position.x/ball_size)-1][Math.floor(ball.position.y/ball_size)-1].push(ball);
-            } catch(e){
-                alert("crash")
-                console.log(e)
-                console.log(ball.position)
-                console.log(Math.floor(ball.position.x/ball_size), Math.floor(ball.position.y/ball_size))
-                console.log(grid[Math.floor(ball.position.x/ball_size)][Math.floor(ball.position.y/ball_size)])
-            }
-            */
+            let column = Math.min(Math.max(Math.floor(ball.position.x/(ball_size*2))-1, 0), 74)
+            let row = Math.min(Math.max(Math.floor(ball.position.y/(ball_size*2))-1,0), 51)
             
+            grid[column][row].push(ball)
         }
 
         
@@ -97,7 +110,7 @@ function debutSimulation(){
 
         setInterval(() => {
             update()
-        }, 10);
+        }, 1000);
     }    
 }
 
