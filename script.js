@@ -8,10 +8,13 @@ const ball_size = 10
 
 const width = 750;
 const height = 515;
+const MAX_COLUMN = Math.ceil(width / (ball_size*2));
+const MAX_ROW = Math.ceil(height / (ball_size*2))
+
 let grid = Array.from(
-    { length: Math.ceil(width / (ball_size*2)) },
+    { length: MAX_COLUMN },
     () => Array.from(
-        { length: Math.ceil(height / (ball_size*2)) },
+        { length: MAX_ROW },
         () => []
     )
 );
@@ -64,17 +67,17 @@ function update(){
 
     //vider la grille
     grid = Array.from(
-        { length: Math.ceil(width / (2*ball_size)) },
+        { length: MAX_COLUMN },
         () => Array.from(
-            { length: Math.ceil(height / (ball_size*2)) },
+            { length: MAX_ROW },
             () => []
         )
     );
 
     //recalculer la grille
     balls.forEach(ball => {
-        let column = Math.min(Math.max(Math.floor(ball.position.x/(ball_size*2))-1, 0), 74)
-        let row = Math.min(Math.max(Math.floor(ball.position.y/(ball_size*2))-1,0), 51)
+        let column = Math.min(Math.max(Math.floor(ball.position.x/(ball_size*2))-1, 0), MAX_COLUMN)
+        let row = Math.min(Math.max(Math.floor(ball.position.y/(ball_size*2))-1,0), MAX_ROW)
         
         grid[column][row].push(ball)
         console.log(column, row)
@@ -96,8 +99,8 @@ function debutSimulation(){
             let ball = new Ball(width/nb_balls * index, height/5, (Math.random() * 2 -1)*3, (Math.random() * 2 -1)*3, ball_size);
             balls.push(ball);
 
-            let column = Math.min(Math.max(Math.floor(ball.position.x/(ball_size*2))-1, 0), 74)
-            let row = Math.min(Math.max(Math.floor(ball.position.y/(ball_size*2))-1,0), 51)
+            let column = Math.min(Math.max(Math.floor(ball.position.x/(ball_size*2))-1, 0), MAX_COLUMN)
+            let row = Math.min(Math.max(Math.floor(ball.position.y/(ball_size*2))-1,0), MAX_ROW)
             
             grid[column][row].push(ball)
         }
@@ -110,11 +113,23 @@ function debutSimulation(){
 
         setInterval(() => {
             update()
-        }, 1000);
+        }, 10);
     }    
 }
 
+function getBallsNear(ball){
+    let column = Math.min(Math.max(Math.floor(ball.position.x/(ball_size*2))-1, 0), MAX_COLUMN)
+    let row = Math.min(Math.max(Math.floor(ball.position.y/(ball_size*2))-1,0), MAX_ROW)
 
+    console.log("Base : " + column + ", " + row)
+
+    for (let i = column - 1; i < column + 1; i++) {
+        for (let j = row - 1; j < row + 1; j++) {
+            console.log(i, j)
+        }
+    }
+
+}
 
 
 
