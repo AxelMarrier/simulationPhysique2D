@@ -6,6 +6,7 @@ export class Ball {
         this.position = new Vector(xPos,yPos)
         this.size = size
         this.mouvement = new Vector(xMov, yMov)
+        this.neighbor = []
     }
 
     static gravity = 0.07;

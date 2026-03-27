@@ -61,7 +61,9 @@ function update(){
 
     for (let index = 0; index < 3; index++) {
         balls.forEach(ball => {
-            ball.collision(objects);
+            let coll = []
+            coll.push(...walls, ...ball.neighbor)
+            ball.collision(coll);
         });
     }
 
@@ -76,13 +78,16 @@ function update(){
 
     //recalculer la grille
     balls.forEach(ball => {
-        let column = Math.min(Math.max(Math.floor(ball.position.x/(ball_size*2))-1, 0), MAX_COLUMN)
-        let row = Math.min(Math.max(Math.floor(ball.position.y/(ball_size*2))-1,0), MAX_ROW)
+        let column = Math.min(Math.max(Math.floor(ball.position.x/(ball_size*2))-1, 0), MAX_COLUMN-1)
+        let row = Math.min(Math.max(Math.floor(ball.position.y/(ball_size*2))-1,0), MAX_ROW-1)
         
-        grid[column][row].push(ball)
-        console.log(column, row)
-        console.log(grid[column][row])
+        grid[column][row].push(ball) ///// PROBLEME LA
     });
+
+    balls.forEach(ball => {
+        ball.neighbor = [];
+        ball.neighbor = getBallsNear(ball);
+    })
     
 }
 
@@ -98,13 +103,14 @@ function debutSimulation(){
         for (let index = 1; index < nb_balls + 1; index++) {
             let ball = new Ball(width/nb_balls * index, height/5, (Math.random() * 2 -1)*3, (Math.random() * 2 -1)*3, ball_size);
             balls.push(ball);
+        }
 
+        balls.forEach(ball => {
             let column = Math.min(Math.max(Math.floor(ball.position.x/(ball_size*2))-1, 0), MAX_COLUMN)
             let row = Math.min(Math.max(Math.floor(ball.position.y/(ball_size*2))-1,0), MAX_ROW)
             
             grid[column][row].push(ball)
-        }
-
+        });
         
         objects.push(...balls, ...walls);
 
@@ -121,14 +127,25 @@ function getBallsNear(ball){
     let column = Math.min(Math.max(Math.floor(ball.position.x/(ball_size*2))-1, 0), MAX_COLUMN)
     let row = Math.min(Math.max(Math.floor(ball.position.y/(ball_size*2))-1,0), MAX_ROW)
 
-    console.log("Base : " + column + ", " + row)
-
-    for (let i = column - 1; i < column + 1; i++) {
-        for (let j = row - 1; j < row + 1; j++) {
-            console.log(i, j)
+    let ballsNear = []
+    try{
+        for(let i = column-1; i <= column+1; i++){
+            for(let j = row-1; j <= row+1; j++){
+                if((i >= 0 && j >= 0) && (i < MAX_COLUMN && j < MAX_ROW)){
+                    if(grid[i][j].length != 0){
+                        grid[i][j].forEach(near => {
+                            if(ball != near){
+                                ballsNear.push(near)                            
+                            }
+                        });
+                    }
+                }
+            }
         }
+    } catch(e){
+        console.log(e)
     }
-
+    return ballsNear;
 }
 
 
